@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
-const checkToken = (req, res, next) => {
-  let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
+const checkAccessToken = (req, res, next) => {
+  let token = req.headers['x-access-token'];
 
   if (!token) {
     return res.status(400).json({
@@ -32,6 +32,25 @@ const checkToken = (req, res, next) => {
   }
 };
 
+const checkRefreshToken = (req, res, next) => {
+  const refreshToken = req.headers['x-refresh-token'];
+  const accessToken = req.headers['x-access-token'];
+
+  const accessTokenContent = jwt.decode(accessToken);
+  const username = accessTokenContent.username;
+  const storedRefreshToken = global.refreshTokens[username];
+
+  if (storedRefreshToken && refreshToken === storedRefreshToken) {
+    req.username = username;
+    next();
+  } else {
+    return res.status(401).json({
+      message: 'Invalid token'
+    });
+  }
+};
+
 module.exports = {
-  checkToken: checkToken
+  checkAccessToken: checkAccessToken,
+  checkRefreshToken: checkRefreshToken
 };

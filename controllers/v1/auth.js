@@ -1,8 +1,6 @@
 const jwt = require('jsonwebtoken');
 const randToken = require('rand-token');
 
-let refreshTokens = [];
-
 module.exports = {
   login: async (req, res) => {
     let username = req.body.username;
@@ -23,7 +21,7 @@ module.exports = {
         );
 
         let refreshToken = randToken.uid(256);
-        refreshTokens[username] = refreshToken;
+        global.refreshTokens[username] = refreshToken;
 
         res.json({
           message: 'Authentication successful!',

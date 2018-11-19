@@ -1,4 +1,4 @@
-const { validationResult } = require('express-validator/check');
+const { validationResult, header } = require('express-validator/check');
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -11,8 +11,19 @@ const validate = (req, res, next) => {
 };
 
 module.exports = {
-  reject: [
+  rejectToken: [
     //
+    validate
+  ],
+  refreshToken: [
+    [
+      header('x-access-token')
+        .not()
+        .isEmpty(),
+      header('x-refresh-token')
+        .not()
+        .isEmpty()
+    ],
     validate
   ]
 };
