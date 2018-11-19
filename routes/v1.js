@@ -27,4 +27,11 @@ router.post(
   tokenController.refreshToken
 );
 
+router.post(
+  '/token/reject',
+  jwtMiddleware.checkAccessToken,
+  tokenValidator.rejectToken,
+  tokenController.rejectToken
+);
+
 module.exports = router;
