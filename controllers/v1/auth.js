@@ -1,5 +1,4 @@
-const jwt = require('jsonwebtoken');
-const randToken = require('rand-token');
+import { tokenService } from '../../services';
 
 module.exports = {
   login: async (req, res) => {
@@ -12,16 +11,10 @@ module.exports = {
 
     if (username && password) {
       if (username === mockedUsername && password === mockedPassword) {
-        let accessToken = jwt.sign(
-          { username: username },
-          process.env.JWT_SECRET,
-          {
-            expiresIn: '30s'
-          }
-        );
-
-        let refreshToken = randToken.uid(256);
-        global.refreshTokens[username] = refreshToken;
+        const refreshToken = await tokenService.generateRefreshToken(username);
+        const accessToken = await tokenService.generateAccessToken({
+          username: username
+        });
 
         res.json({
           message: 'Authentication successful!',

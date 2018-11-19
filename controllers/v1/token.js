@@ -1,16 +1,14 @@
+import { tokenService } from '../../services';
+
 const jwt = require('jsonwebtoken');
 
 module.exports = {
   refreshToken: async (req, res) => {
     try {
       const username = req.username;
-      let accessToken = jwt.sign(
-        { username: username },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: '30s'
-        }
-      );
+      const accessToken = await tokenService.generateAccessToken({
+        username: username
+      });
 
       res.status(201).json({ accessToken: accessToken });
     } catch (err) {

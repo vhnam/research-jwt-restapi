@@ -1,5 +1,7 @@
-const employee = require("./employee");
+const employee = require('./employee');
+const token = require('./token');
 
 module.exports = {
-  employeeService: employee
+  employeeService: employee,
+  tokenService: token
 };
