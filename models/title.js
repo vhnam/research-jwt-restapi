@@ -1,7 +1,8 @@
-"use strict";
+'use strict';
+
 module.exports = (sequelize, DataTypes) => {
   const Title = sequelize.define(
-    "Title",
+    'Title',
     {
       emp_no: { type: DataTypes.INTEGER, primaryKey: true },
       title: { type: DataTypes.STRING, primaryKey: true },
@@ -9,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       freezeTableName: true,
-      tableName: "titles",
+      tableName: 'titles',
       timestamps: false
     }
   );

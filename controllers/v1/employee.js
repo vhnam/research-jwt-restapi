@@ -1,9 +1,9 @@
-import { employeeService } from "../../services";
+import { employeeService } from '../../services';
 
 module.exports = {
   getEmployees: async (req, res) => {
     try {
-      const page = parseInt(req.query.page || req.query.p || 1);
+      const page = parseInt(req.query.page);
       const response = await employeeService.getEmployees(page);
       res.status(200).json(response);
     } catch (err) {

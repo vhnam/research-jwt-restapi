@@ -1,7 +1,8 @@
-"use strict";
+'use strict';
+
 module.exports = (sequelize, DataTypes) => {
   const DeptEmp = sequelize.define(
-    "DeptEmp",
+    'DeptEmp',
     {
       dept_no: DataTypes.INTEGER,
       emp_no: DataTypes.INTEGER,
@@ -10,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       freezeTableName: true,
-      tableName: "dept_emp",
+      tableName: 'dept_emp',
       timestamps: false
     }
   );

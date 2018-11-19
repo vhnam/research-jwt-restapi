@@ -1,4 +1,4 @@
-const { validationResult } = require('express-validator/check');
+const { validationResult, check, oneOf } = require('express-validator/check');
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -11,10 +11,5 @@ const validate = (req, res, next) => {
 };
 
 module.exports = {
-  getEmployees: [
-    [
-      //
-    ],
-    validate
-  ]
+  getEmployees: [oneOf([check('page').exists(), check('p').exists()]), validate]
 };

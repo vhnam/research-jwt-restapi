@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("salaries", {
+    return queryInterface.createTable('salaries', {
       emp_no: {
         primaryKey: true,
         type: Sequelize.INTEGER
@@ -24,6 +24,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("salaries");
+    return queryInterface.dropTable('salaries');
   }
 };

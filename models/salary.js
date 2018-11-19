@@ -1,7 +1,8 @@
-"use strict";
+'use strict';
+
 module.exports = (sequelize, DataTypes) => {
   const Salary = sequelize.define(
-    "Salary",
+    'Salary',
     {
       emp_no: { type: DataTypes.INTEGER, primaryKey: true },
       salary_no: { type: DataTypes.INTEGER, primaryKey: true },
@@ -9,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       freezeTableName: true,
-      tableName: "salaries",
+      tableName: 'salaries',
       timestamps: false
     }
   );
