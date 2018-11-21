@@ -1,3 +1,5 @@
+import { tokenService } from '../services';
+
 const jwt = require('jsonwebtoken');
 
 const checkAccessToken = (req, res, next) => {
@@ -31,16 +33,16 @@ const checkAccessToken = (req, res, next) => {
   });
 };
 
-const checkRefreshToken = (req, res, next) => {
+const checkRefreshToken = async (req, res, next) => {
+  const payload = req.payload;
   const refreshToken = req.headers['x-refresh-token'];
-  const accessToken = req.headers['x-access-token'];
+  const isMatching = await tokenService.getRefreshToken(
+    payload.id,
+    refreshToken
+  );
 
-  const accessTokenContent = jwt.decode(accessToken);
-  const username = accessTokenContent.username;
-  const storedRefreshToken = global.refreshTokens[username];
-
-  if (storedRefreshToken && refreshToken === storedRefreshToken) {
-    req.username = username;
+  if (isMatching) {
+    req.username = payload.username;
     next();
   } else {
     return res.status(401).json({
@@ -49,7 +51,7 @@ const checkRefreshToken = (req, res, next) => {
   }
 };
 
-const extractPayload = (req, res, next) => {
+const getPayload = (req, res, next) => {
   const accessToken = req.headers['x-access-token'];
   const content = jwt.decode(accessToken, { complete: true });
   req.payload = content.payload;
@@ -59,5 +61,5 @@ const extractPayload = (req, res, next) => {
 module.exports = {
   checkAccessToken: checkAccessToken,
   checkRefreshToken: checkRefreshToken,
-  extractPayload: extractPayload
+  getPayload: getPayload
 };

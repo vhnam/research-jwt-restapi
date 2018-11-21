@@ -13,6 +13,7 @@ module.exports = {
 
       res.status(201).json({ accessToken: accessToken });
     } catch (err) {
+      console.log(err.stack);
       res.status(400).json({ message: err.message });
     }
   },

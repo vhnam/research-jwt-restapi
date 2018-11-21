@@ -1,3 +1,5 @@
+import { User } from '../models';
+
 const jwt = require('jsonwebtoken');
 
 module.exports = {
@@ -30,5 +32,22 @@ module.exports = {
 
     global.refreshTokens[username] = refreshToken;
     return refreshToken;
+  },
+
+  getRefreshToken: async (id, refreshToken) => {
+    const user = await User.find({
+      attributes: ['refreshToken'],
+      where: {
+        id: id,
+        refreshToken: refreshToken,
+        isLogin: true
+      }
+    });
+
+    if (!user) {
+      throw new Error('Invalid token');
+    }
+
+    return user.refreshToken;
   }
 };

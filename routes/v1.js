@@ -29,7 +29,7 @@ router.get(
   '/logout',
   authValidator.logout,
   jwtMiddleware.checkAccessToken,
-  jwtMiddleware.extractPayload,
+  jwtMiddleware.getPayload,
   authController.logout
 );
 
@@ -39,6 +39,7 @@ router.get(
 router.post(
   '/token',
   tokenValidator.refreshAccessToken,
+  jwtMiddleware.getPayload,
   jwtMiddleware.checkRefreshToken,
   tokenController.refreshAccessToken
 );
