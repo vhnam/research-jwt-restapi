@@ -42,7 +42,6 @@ const checkRefreshToken = async (req, res, next) => {
   );
 
   if (isMatching) {
-    req.username = payload.username;
     next();
   } else {
     return res.status(401).json({

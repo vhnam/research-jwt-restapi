@@ -1,19 +1,32 @@
-import { tokenService } from '../../services';
+import { tokenService, authService } from '../../services';
 
 const jwt = require('jsonwebtoken');
 
 module.exports = {
   refreshAccessToken: async (req, res) => {
     try {
-      const username = req.username;
+      const payload = req.payload;
 
-      const accessToken = await tokenService.generateAccessToken({
-        username: username
+      const refreshToken = await tokenService.generateRefreshToken(
+        payload.username
+      );
+
+      Promise.all([
+        authService.updateStateAfterLogin(payload.id, refreshToken),
+        tokenService.generateAccessToken(
+          payload.id,
+          payload.username,
+          payload.role
+        )
+      ]).then(values => {
+        const accessToken = values[1];
+
+        res.status(200).json({
+          accessToken: accessToken,
+          refreshToken: refreshToken
+        });
       });
-
-      res.status(201).json({ accessToken: accessToken });
     } catch (err) {
-      console.log(err.stack);
       res.status(400).json({ message: err.message });
     }
   },
