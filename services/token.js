@@ -1,7 +1,20 @@
 import { User } from '../models';
 import { encodeBase64, encodeHmacSHA512 } from '../helpers/crypto';
 
+const { promisify } = require('util');
+const redis = require('redis');
 const jwt = require('jsonwebtoken');
+
+const redisClient = redis.createClient({
+  detect_buffers: true,
+  expire: process.env.JWT_ACCESS_TOKEN_TIMEOUT * 60
+});
+
+const getAsync = promisify(redisClient.get).bind(redisClient);
+
+const saveAccessToken = async (username, token) => {
+  redisClient.set(username, token);
+};
 
 module.exports = {
   generateAccessToken: async (id, username, role) => {
@@ -16,6 +29,7 @@ module.exports = {
         expiresIn: process.env.JWT_ACCESS_TOKEN_TIMEOUT
       }
     );
+    saveAccessToken(username, accessToken);
 
     return accessToken;
   },
@@ -52,6 +66,11 @@ module.exports = {
     return user.refreshToken;
   },
 
+  getAccessToken: async username => {
+    const accessToken = await getAsync(username);
+    return accessToken;
+  },
+
   verifySignature: async accessToken => {
     const content = accessToken.split('.');
     const header = content[0];
@@ -63,5 +82,9 @@ module.exports = {
     );
 
     return signature === encodedSignature;
+  },
+
+  deleteAccessToken: async username => {
+    redisClient.del(username);
   }
 };

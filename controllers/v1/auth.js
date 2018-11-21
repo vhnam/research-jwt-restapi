@@ -30,8 +30,12 @@ module.exports = {
   logout: async (req, res) => {
     try {
       const payload = req.payload;
-      await authService.logout(payload);
-      res.status(200).json({ message: 'OK' });
+      Promise.all([
+        authService.logout(payload),
+        tokenService.deleteAccessToken(payload.username)
+      ]).then(() => {
+        res.status(200).json({ message: 'OK' });
+      });
     } catch (error) {
       res.status(400).json({ message: error.message });
     }

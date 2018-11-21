@@ -2,7 +2,7 @@ import { tokenService } from '../services';
 
 const jwt = require('jsonwebtoken');
 
-const checkAccessToken = (req, res, next) => {
+const checkAccessToken = async (req, res, next) => {
   let token = req.headers['x-access-token'];
 
   if (!token) {
@@ -16,6 +16,17 @@ const checkAccessToken = (req, res, next) => {
   }
 
   if (!token) {
+    return res.status(401).json({
+      message: 'Invalid token'
+    });
+  }
+
+  const accessTokenContent = jwt.decode(token, { complete: true });
+  const storedAccessToken = await tokenService.getAccessToken(
+    accessTokenContent.payload.username
+  );
+
+  if (token !== storedAccessToken) {
     return res.status(401).json({
       message: 'Invalid token'
     });
@@ -48,7 +59,6 @@ const checkRefreshToken = async (req, res, next) => {
       throw new Error('Invalid token');
     }
   } catch (error) {
-    console.log(error.stack);
     return res.status(401).json({
       message: error.message
     });
