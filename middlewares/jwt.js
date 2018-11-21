@@ -36,16 +36,21 @@ const checkAccessToken = (req, res, next) => {
 const checkRefreshToken = async (req, res, next) => {
   const payload = req.payload;
   const refreshToken = req.headers['x-refresh-token'];
-  const isMatching = await tokenService.getRefreshToken(
-    payload.id,
-    refreshToken
-  );
+  try {
+    const isMatching = await tokenService.getRefreshToken(
+      payload.id,
+      refreshToken
+    );
 
-  if (isMatching) {
-    next();
-  } else {
+    if (isMatching) {
+      next();
+    } else {
+      throw new Error('Invalid token');
+    }
+  } catch (error) {
+    console.log(error.stack);
     return res.status(401).json({
-      message: 'Invalid token'
+      message: error.message
     });
   }
 };

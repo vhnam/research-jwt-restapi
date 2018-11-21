@@ -1,4 +1,5 @@
 import { User } from '../models';
+import { encodeBase64, encodeHmacSHA512 } from '../helpers/crypto';
 
 const jwt = require('jsonwebtoken');
 
@@ -49,5 +50,18 @@ module.exports = {
     }
 
     return user.refreshToken;
+  },
+
+  verifySignature: async accessToken => {
+    const content = accessToken.split('.');
+    const header = content[0];
+    const payload = content[1];
+    const signature = content[2];
+
+    const encodedSignature = encodeHmacSHA512(
+      [encodeBase64(header), encodeBase64(payload)].join('.')
+    );
+
+    return signature === encodedSignature;
   }
 };

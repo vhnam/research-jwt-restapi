@@ -6,6 +6,11 @@ module.exports = {
   refreshAccessToken: async (req, res) => {
     try {
       const payload = req.payload;
+      const accessToken = req.headers['x-access-token'];
+
+      if (!tokenService.verifySignature(accessToken)) {
+        throw new Error('Invalid token');
+      }
 
       const refreshToken = await tokenService.generateRefreshToken(
         payload.username
