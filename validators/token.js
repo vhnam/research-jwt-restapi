@@ -11,15 +11,7 @@ const validate = (req, res, next) => {
 };
 
 module.exports = {
-  rejectToken: [
-    [
-      header('x-access-token')
-        .not()
-        .isEmpty()
-    ],
-    validate
-  ],
-  refreshToken: [
+  refreshAccessToken: [
     [
       header('x-access-token')
         .not()

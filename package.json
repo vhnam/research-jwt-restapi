@@ -4,7 +4,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "NODE_ENV=development nodemon server.js --exec babel-node -e js",
-    "db-migrate": "sequelize db:migrate"
+    "db-migrate": "NODE_ENV=development node_modules/.bin/sequelize db:migrate",
+    "db-seed": "NODE_ENV=development node_modules/.bin/sequelize db:seed:all"
   },
   "author": "Nam Vo <vhnam2504@gmail.com>",
   "dependencies": {

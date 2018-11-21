@@ -11,6 +11,9 @@ const tokenController = require('../controllers/v1/token');
 
 const jwtMiddleware = require('../middlewares/jwt');
 
+/**
+ * Get employee
+ */
 router.get(
   '/employees',
   jwtMiddleware.checkAccessToken,
@@ -18,20 +21,26 @@ router.get(
   employeeController.getEmployees
 );
 
+/**
+ * Authentication
+ */
 router.post('/login', authValidator.login, authController.login);
-
-router.post(
-  '/token',
-  jwtMiddleware.checkRefreshToken,
-  tokenValidator.refreshToken,
-  tokenController.refreshToken
+router.get(
+  '/logout',
+  authValidator.logout,
+  jwtMiddleware.checkAccessToken,
+  jwtMiddleware.extractPayload,
+  authController.logout
 );
 
+/**
+ * Token
+ */
 router.post(
-  '/token/reject',
-  jwtMiddleware.checkAccessToken,
-  tokenValidator.rejectToken,
-  tokenController.rejectToken
+  '/token',
+  tokenValidator.refreshAccessToken,
+  jwtMiddleware.checkRefreshToken,
+  tokenController.refreshAccessToken
 );
 
 module.exports = router;

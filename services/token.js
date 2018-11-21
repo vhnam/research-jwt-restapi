@@ -1,17 +1,33 @@
 const jwt = require('jsonwebtoken');
-const randToken = require('rand-token');
 
 module.exports = {
-  generateAccessToken: async body => {
-    const accessToken = jwt.sign(body, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_TIMEOUT
-    });
+  generateAccessToken: async (id, username, role) => {
+    const accessToken = jwt.sign(
+      {
+        id: id,
+        username: username,
+        role: role
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_ACCESS_TOKEN_TIMEOUT
+      }
+    );
 
     return accessToken;
   },
 
   generateRefreshToken: async username => {
-    let refreshToken = randToken.uid(256);
+    const refreshToken = jwt.sign(
+      {
+        username: username
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_REFRESH_TOKEN_TIMEOUT
+      }
+    );
+
     global.refreshTokens[username] = refreshToken;
     return refreshToken;
   }

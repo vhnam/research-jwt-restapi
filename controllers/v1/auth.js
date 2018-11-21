@@ -1,36 +1,39 @@
-import { tokenService } from '../../services';
+import { tokenService, authService } from '../../services';
 
 module.exports = {
   login: async (req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
+    const { username, password } = req.body;
 
-    // For the given username fetch user from DB
-    let mockedUsername = 'admin';
-    let mockedPassword = 'password';
+    try {
+      const user = await authService.login(username, password);
 
-    if (username && password) {
-      if (username === mockedUsername && password === mockedPassword) {
+      if (user) {
         const refreshToken = await tokenService.generateRefreshToken(username);
-        const accessToken = await tokenService.generateAccessToken({
-          username: username
-        });
 
-        res.json({
-          message: 'Authentication successful!',
-          accessToken: accessToken,
-          refreshToken: refreshToken
-        });
-      } else {
-        res.send(403).json({
-          message: 'Incorrect username or password'
+        Promise.all([
+          authService.updateStateAfterLogin(user.id, refreshToken),
+          tokenService.generateAccessToken(user.id, username, user.role)
+        ]).then(values => {
+          const accessToken = values[1];
+
+          res.status(200).json({
+            accessToken: accessToken,
+            refreshToken: refreshToken
+          });
         });
       }
-    } else {
-      res.send(400).json({
-        success: false,
-        message: 'Authentication failed! Please check the request'
-      });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  },
+
+  logout: async (req, res) => {
+    try {
+      const payload = req.payload;
+      await authService.logout(payload);
+      res.status(200).json({ message: 'OK' });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
     }
   }
 };

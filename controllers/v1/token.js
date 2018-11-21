@@ -3,9 +3,10 @@ import { tokenService } from '../../services';
 const jwt = require('jsonwebtoken');
 
 module.exports = {
-  refreshToken: async (req, res) => {
+  refreshAccessToken: async (req, res) => {
     try {
       const username = req.username;
+
       const accessToken = await tokenService.generateAccessToken({
         username: username
       });

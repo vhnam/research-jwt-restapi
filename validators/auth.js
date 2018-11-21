@@ -21,5 +21,6 @@ module.exports = {
         .isEmpty()
     ],
     validate
-  ]
+  ],
+  logout: [validate]
 };
